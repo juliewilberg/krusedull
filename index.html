@@ -105,6 +105,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .board{position:relative;width:100%;max-width:max(300px,calc((100dvh - 250px) * 4 / 3));aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:2px solid var(--edge);box-shadow:6px 6px 0 color-mix(in srgb,var(--drop) 22%,transparent);background:#fff}
 canvas#cv{display:block;width:100%;height:100%;touch-action:none;background:#fff}
 canvas.can{cursor:crosshair}
+.tool{display:inline-flex;align-items:center;gap:6px}
+.tool .ic{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+canvas.can.fill{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M5 11l7-7 7 7-7 7z' fill='%23fff'/%3E%3Cpath d='M5 11h14'/%3E%3Cpath d='M21 15c0 1.4-1 2.5-1 3.3a1 1 0 0 0 2 0c0-.8-1-1.9-1-3.3z' fill='%23e63946'/%3E%3C/svg%3E") 3 22,crosshair}
+canvas.can.erase{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 15l9-10a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-6 7H8z' fill='%23f4a6b8'/%3E%3Cpath d='M9 11l6 6'/%3E%3C/svg%3E") 6 22,cell}
 .board.free{aspect-ratio:auto;max-width:720px;background:var(--card)}
 .board.free #cv,.board.free .timebar,.board.free .who,.board.free .fx{display:none}
 .board.free .overlay{position:relative;inset:auto;background:none;backdrop-filter:none;padding:24px 18px}
@@ -278,10 +282,10 @@ details[open] summary{margin-bottom:8px}
       <div class="tools" id="tools" hidden>
         <div class="swatches" id="swatches"></div>
         <div class="sizes" id="sizes"></div>
-        <button class="tool" id="fill" type="button" aria-pressed="false">Fyll</button>
-        <button class="tool" id="eraser" type="button" aria-pressed="false">Viskelær</button>
-        <button class="tool" id="undo" type="button">Angre</button>
-        <button class="tool" id="clear" type="button">Tøm</button>
+        <button class="tool" id="fill" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11l7-7 7 7-7 7z"/><path d="M5 11h14"/><path d="M21 15c0 1.4-1 2.5-1 3.3a1 1 0 0 0 2 0c0-.8-1-1.9-1-3.3z" fill="currentColor"/><path d="M4 21h8"/></svg><span>Fyll</span></button>
+        <button class="tool" id="eraser" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15l9-10a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-6 7H8z"/><path d="M9 11l6 6"/><path d="M13 20h8"/></svg><span>Viskelær</span></button>
+        <button class="tool" id="undo" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Angre</span></button>
+        <button class="tool" id="clear" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg><span>Tøm</span></button>
       </div>
     </section>
     <aside class="card chat" aria-label="Gjetting og prat">
@@ -299,7 +303,8 @@ details[open] summary{margin-bottom:8px}
 (() => {
 const W = 800, H = 600;
 const $ = id => document.getElementById(id);
-const DEFAULT_WORDS = [...new Set(`sol,måne,stjerne,regnbue,sky,lyn,snømann,paraply,fjell,vulkan,øy,strand,bølge,fyrtårn,tre,blomst,kaktus,sopp,eple,banan,ananas,jordbær,gulrot,brokkoli,pizza,taco,hamburger,pølse,vaffel,iskrem,kake,kaffe,ost,egg,brød,kanelbolle,brunost,katt,hund,hest,ku,gris,sau,høne,and,ugle,pingvin,elg,rev,bjørn,ulv,hval,hai,blekksprut,krabbe,snegle,edderkopp,bie,sommerfugl,slange,krokodille,sjiraff,elefant,løve,ape,dinosaur,drage,enhjørning,robot,romvesen,spøkelse,vampyr,pirat,ridder,prinsesse,krone,sverd,skattekiste,slott,telt,hytte,iglo,bro,tårn,sykkel,bil,buss,tog,fly,båt,ubåt,rakett,helikopter,traktor,skateboard,ski,skøyter,akebrett,fotball,tennis,bowling,gitar,piano,trommer,fiolin,mikrofon,hodetelefoner,kamera,telefon,datamaskin,tastatur,lyspære,batteri,magnet,vekkerklokke,kalender,nøkkel,dør,vindu,trapp,heis,seng,sofa,lampe,speil,dusj,badekar,tannbørste,saks,blyant,linjal,bok,brev,gave,ballong,bursdag,julenisse,juletre,påskeegg,snøfnugg,fyrverkeri,briller,hatt,lue,votter,skjerf,sokk,støvel,ryggsekk,koffert,lommebok,diamant,ring,tannlege,brannbil,politibil,kaffemaskin,printer,whiteboard,fredagstaco,hjemmekontor,deadline,regneark,e-post,videomøte,kantine,lunsj,kontorstol,kaffekopp,ferie,hengekøye,grill,badeball,sandslott`.split(","))];
+const DEFAULT_WORDS = [...new Set(`sol,måne,stjerne,regnbue,sky,lyn,snømann,paraply,fjell,vulkan,øy,strand,bølge,fyrtårn,tre,blomst,kaktus,sopp,eple,banan,ananas,jordbær,gulrot,brokkoli,pizza,taco,hamburger,pølse,vaffel,iskrem,kake,kaffe,ost,egg,brød,kanelbolle,brunost,katt,hund,hest,ku,gris,sau,høne,and,ugle,pingvin,elg,rev,bjørn,ulv,hval,hai,blekksprut,krabbe,snegle,edderkopp,bie,sommerfugl,slange,krokodille,sjiraff,elefant,løve,ape,dinosaur,drage,enhjørning,robot,romvesen,spøkelse,vampyr,pirat,ridder,prinsesse,krone,sverd,skattekiste,slott,telt,hytte,iglo,bro,tårn,sykkel,bil,buss,tog,fly,båt,ubåt,rakett,helikopter,traktor,skateboard,ski,skøyter,akebrett,fotball,tennis,bowling,gitar,piano,trommer,fiolin,mikrofon,hodetelefoner,kamera,telefon,datamaskin,tastatur,lyspære,batteri,magnet,vekkerklokke,kalender,nøkkel,dør,vindu,trapp,heis,seng,sofa,lampe,speil,dusj,badekar,tannbørste,saks,blyant,linjal,bok,brev,gave,ballong,bursdag,julenisse,juletre,påskeegg,snøfnugg,fyrverkeri,briller,hatt,lue,votter,skjerf,sokk,støvel,ryggsekk,koffert,lommebok,diamant,ring,tannlege,brannbil,politibil,kaffemaskin,printer,whiteboard,fredagstaco,hjemmekontor,deadline,regneark,e-post,videomøte,kantine,lunsj,kontorstol,kaffekopp,ferie,hengekøye,grill,badeball,apekatt,sjøhest,flaggermus,pave,kenguru,panda,isbjørn,flodhest,neshorn,sel,måke,ørn,papegøye,flamingo,påfugl,tukan,sjøstjerne,manet,delfin,skilpadde,frosk,tusenbein,maur,marihøne,bever,pinnsvin,ekorn,mus,kanin,esel,geit,lama,kamel,sebra,gepard,hjort,reinsdyr,tiger,gorilla,hamster,fisk,rotte,tømmerhugger,gressløk,gresskar,potet,løk,agurk,tomat,mais,druer,vannmelon,sitron,appelsin,kirsebær,pære,jordnøtt,popcorn,smultring,sjokolade,lollipop,hotdog,spagetti,sushi,pannekake,burger,muffins,bagett,pretzel,melk,te,juice,sukkertøy,iskaffe,fyrstikk,stearinlys,ildsted,bål,peis,gryte,stekepanne,kniv,gaffel,skje,tallerken,kopp,flaske,vannkoker,brødrister,kjøleskap,vaskemaskin,støvsuger,kost,bøtte,hammer,sag,skrutrekker,tang,stige,spade,øks,hjul,tannhjul,anker,ratt,kompass,kart,globus,teleskop,mikroskop,kikkert,lommelykt,lykt,parasoll,drivhus,vindmølle,fabrikk,kirke,moské,pyramide,tempel,fontene,brannhydrant,postkasse,trafikklys,veiskilt,gatelys,bensinstasjon,flyplass,havn,fergen,seilbåt,kano,kajakk,flåte,luftballong,fallskjerm,drone,sporvogn,moped,motorsykkel,gravemaskin,kran,lastebil,ambulanse,campingvogn,rullestol,rulleskøyter,trampoline,huske,sklie,vippe,sandkasse,badeand,dukke,bamse,lego,terning,sjakk,kortstokk,puslespill,drage,jojo,tryllestav,tryllehatt,sirkus,klovn,sirkustelt,magiker,trollmann,fe,hekse,heks,havfrue,nisse,troll,kjempe,mumie,zombie,skjelett,gravstein,gresskarlykt,julekule,adventskalender,pepperkake,gaveeske,snøscooter,snøball,skihopp,kjelke,hockey,basketball,volleyball,håndball,golf,boksing,sykling,svømming,klatring,surfing,dykking,fiske,fiskestang,bue,pil,skyteskive,medalje,pokal,flagg,fakkel,trofé,maraton,startblokk,mål,dommer,fløyte,stoppeklokke,vekt,briller,solbriller,parykk,slips,genser,kjole,bukse,sko,tøfler,sandaler,hansker,belte,paraplyen,veske,smykke,krone,halskjede,øredobb,klokke,armbånd,hårbørste,saks,speilbilde,sminke,leppestift,såpe,håndkle,toalett,vaskeservant,søppelbøtte,pose,eske,pakke,konvolutt,frimerke,stempel,mappe,binders,teip,lim,viskelær,tusj,fargeblyant,maleri,pensel,palett,staffeli,skulptur,museum,teater,kino,popkorn,film,scene,kulisser,radio,tv,fjernkontroll,høyttaler,vinyl,kassett,walkie-talkie,smarttelefon,nettbrett,skjerm,kabel,stikkontakt,wifi,sky-lagring,passord,hacker,robotstøvsuger,chatbot,programmerer,bug,backup,server,møterom,flipover,post-it,presentasjon,kaffepause,overtid,lønning,sjef,praktikant,julebord,teambuilding,hjemmekontor,hodepine,søvnig,mandag,helg,sommerfest,pendler,rushtid,kø,sykemelding,kaffekapsel,vannfontene,lunsjboks,matpakke,fotballtrener,kontorplante`.split(","))];
+const WORDS_EN = [...new Set(`sun,moon,star,rainbow,cloud,lightning,snowman,umbrella,mountain,volcano,island,beach,wave,lighthouse,tree,flower,cactus,mushroom,apple,banana,pineapple,strawberry,carrot,broccoli,pizza,taco,hamburger,hot dog,waffle,ice cream,cake,coffee,cheese,egg,bread,cinnamon bun,donut,popcorn,pancake,sushi,spaghetti,cat,dog,horse,cow,pig,sheep,chicken,duck,owl,penguin,moose,fox,bear,wolf,whale,shark,octopus,crab,snail,spider,bee,butterfly,snake,crocodile,giraffe,elephant,lion,monkey,dinosaur,dragon,unicorn,robot,alien,ghost,vampire,pirate,knight,princess,crown,sword,treasure chest,castle,tent,cabin,igloo,bridge,tower,bicycle,car,bus,train,airplane,boat,submarine,rocket,helicopter,tractor,skateboard,skis,ice skates,sled,football,tennis,bowling,guitar,piano,drums,violin,microphone,headphones,camera,telephone,computer,keyboard,light bulb,battery,magnet,alarm clock,calendar,key,door,window,stairs,elevator,bed,sofa,lamp,mirror,shower,bathtub,toothbrush,scissors,pencil,ruler,book,letter,gift,balloon,birthday,santa claus,christmas tree,easter egg,snowflake,fireworks,glasses,hat,beanie,mittens,scarf,sock,boot,backpack,suitcase,wallet,diamond,ring,dentist,fire truck,police car,coffee machine,printer,whiteboard,home office,deadline,spreadsheet,email,video call,cafeteria,lunch,office chair,coffee cup,vacation,hammock,barbecue,beach ball,sandcastle,kangaroo,panda,polar bear,hippo,rhino,seal,seagull,eagle,parrot,flamingo,peacock,toucan,starfish,jellyfish,dolphin,turtle,frog,ladybug,beaver,hedgehog,squirrel,mouse,rabbit,donkey,goat,camel,zebra,cheetah,tiger,gorilla,hamster,fish,bat,pumpkin,potato,onion,cucumber,tomato,corn,grapes,watermelon,lemon,orange,cherry,pear,chocolate,lollipop,candy,knife,fork,spoon,plate,cup,bottle,kettle,toaster,fridge,washing machine,vacuum cleaner,broom,bucket,hammer,saw,screwdriver,pliers,ladder,shovel,axe,wheel,gear,anchor,compass,map,globe,telescope,microscope,binoculars,flashlight,lantern,windmill,factory,church,pyramid,fountain,fire hydrant,mailbox,traffic light,road sign,gas station,airport,harbor,ferry,sailboat,canoe,raft,hot air balloon,parachute,drone,tram,scooter,motorcycle,excavator,crane,truck,ambulance,caravan,wheelchair,roller skates,trampoline,swing,slide,seesaw,sandbox,rubber duck,doll,teddy bear,dice,chess,deck of cards,puzzle,yo-yo,magic wand,magician,circus,clown,wizard,fairy,witch,mermaid,troll,giant,mummy,zombie,skeleton,tombstone,jack-o-lantern,gingerbread man,snowball,hockey,basketball,volleyball,golf,boxing,swimming,climbing,surfing,scuba diving,fishing rod,bow and arrow,medal,trophy,flag,torch,whistle,stopwatch,scale,sunglasses,wig,tie,sweater,dress,pants,shoe,slippers,sandals,gloves,belt,purse,necklace,earring,watch,bracelet,hairbrush,lipstick,soap,towel,toilet,sink,trash can,box,package,envelope,stamp,folder,paperclip,tape,glue,eraser,marker,crayon,painting,paintbrush,easel,sculpture,museum,theater,cinema,movie,stage,radio,television,remote control,speaker,vinyl record,cassette,smartphone,tablet,screen,cable,power outlet,wifi,password,hacker,chatbot,programmer,bug,server,meeting room,sticky note,presentation,coffee break,overtime,boss,intern,team building,headache,monday,weekend,traffic jam,lunch box,office plant`.split(","))];
 const COLORS = ["#1d1d1f","#7a7f87","#e23b3b","#f28c28","#f5c518","#2fa84f","#1aa6a6","#2f5bea","#7b4ddb","#e35d9c","#8a5a2b","#f1c7a3"];
 const SIZES = [4, 9, 18, 34];
 const REACTS = ["😂", "👏", "😮", "❤️", "🤔", "🔥"];
@@ -389,7 +394,7 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, v); } catch (e){} }
 };
 const savedNick = () => (store.get("krusedull:nick") || "").slice(0, 24);
-const defaults = {phase:"lobby", rounds:3, drawTime:80};
+const defaults = {phase:"lobby", rounds:3, drawTime:80, lang:"no"};
 const cur = () => Object.assign({}, defaults, S.state || {});
 const drawerOf = st => (st.order || [])[st.turnIdx];
 const inGame = st => (st.order || []).includes(S.uid);
@@ -676,6 +681,8 @@ function syncTools(){
   document.querySelectorAll(".sz").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === S.size)));
   $("eraser").setAttribute("aria-pressed", String(S.eraser));
   $("fill").setAttribute("aria-pressed", String(S.fill));
+  cv.classList.toggle("fill", S.fill);
+  cv.classList.toggle("erase", S.eraser);
 }
 
 /* ---------- chat log ---------- */
@@ -750,8 +757,21 @@ function once(key, fn){
 function same(st){ const n = cur(); return n.turnId === st.turnId && n.phase === st.phase; }
 
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function wordPool(){
-  return DEFAULT_WORDS;
+/* Remember which words this browser has already offered, so the same ones don't keep coming back.
+   Once most of the list has been used, the memory is cleared and it starts over. */
+const seenKey = lang => "krusedull.seenWords" + (lang === "en" ? ".en" : "");
+function loadSeen(lang){ try { return JSON.parse(localStorage.getItem(seenKey(lang))) || []; } catch (e) { return []; } }
+function saveSeen(lang, a){ try { localStorage.setItem(seenKey(lang), JSON.stringify(a)); } catch (e) {} }
+function wordPool(lang){
+  return lang === "en" ? WORDS_EN : DEFAULT_WORDS;
+}
+function pickChoices(n, lang){
+  let seen = loadSeen(lang);
+  let fresh = wordPool(lang).filter(w => !seen.includes(w));
+  if (fresh.length < n * 3){ seen = []; fresh = wordPool(lang); }
+  const picks = shuffle(fresh).slice(0, n);
+  saveSeen(lang, seen.concat(picks));
+  return picks;
 }
 
 async function startGame(){
@@ -790,7 +810,7 @@ async function nextTurn(st){
 function ensureChoices(){
   const st = cur();
   if (S.choicesFor === st.turnId && S.choices) return;
-  S.choices = shuffle(wordPool()).slice(0, 3); S.choicesFor = st.turnId;
+  S.choices = pickChoices(3, st.lang); S.choicesFor = st.turnId;
 }
 const maskOf = w => [...w].map(ch => /[\s-]/.test(ch) ? ch : "_").join("");
 async function pickWord(word){
@@ -1036,7 +1056,8 @@ function buildLobby(ov){
     el("div", { class: "chips", id: "lobbyChips" }),
     el("div", { class: "row" },
       el("label", { class: "field" }, "Runder", sel("setRounds", [2, 3, 4, 5], v => setLobby({ rounds: +v }))),
-      el("label", { class: "field" }, "Tegnetid", sel("setTime", [60, 80, 100, 120], v => setLobby({ drawTime: +v }), v => v + " sek"))),
+      el("label", { class: "field" }, "Tegnetid", sel("setTime", [60, 80, 100, 120], v => setLobby({ drawTime: +v }), v => v + " sek")),
+      el("label", { class: "field" }, "Gjetteord", sel("setLang", ["no", "en"], v => setLobby({ lang: v }), v => v === "en" ? "Engelsk" : "Norsk"))),
     el("div", {}, el("button", { class: "btn go", id: "startBtn", type: "button", onclick: startGame }, "Start spillet!")),
     el("p", { class: "hint", id: "startHint" })
   );
@@ -1071,10 +1092,11 @@ function updateLobby(st){
   const nick = $("nick");
   if (document.activeElement !== nick && !nick.dataset.touched){ nick.value = (S.players[S.uid] && S.players[S.uid].nick) || savedNick(); }
   nick.oninput = () => { nick.dataset.touched = "1"; };
-  const sr = $("setRounds"), stt = $("setTime");
+  const sr = $("setRounds"), stt = $("setTime"), sl = $("setLang");
   if (document.activeElement !== sr) sr.value = String(st.rounds);
   if (document.activeElement !== stt) stt.value = String(st.drawTime);
-  [sr, stt].forEach(x => x.disabled = S.readOnly);
+  if (document.activeElement !== sl) sl.value = st.lang === "en" ? "en" : "no";
+  [sr, stt, sl].forEach(x => x.disabled = S.readOnly);
   const ready = ids.filter(isPresent).length;
   const sb = $("startBtn"); sb.disabled = ready < 2 || S.readOnly || !joined;
   $("startHint").textContent = !joined ? "Bli med først, så kan du starte." : ready < 2 ? "Trenger minst 2 spillere. Del lenken med teamet." : `${ready} spillere klare.`;
