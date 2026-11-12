@@ -2,6 +2,8 @@
 
 A real-time drawing and guessing game for teams. One player draws, everyone else guesses. The game has rounds, scoring, letter hints, custom word lists and private chat for players who have already guessed the word. The in-game text and built-in word list are in Norwegian.
 
+Every player gets a doodle avatar that they can restyle in the lobby. During a round, guessers can send emoji reactions that float over the drawing, and the game plays short sound effects (the speaker button in the header mutes them). These extras are in `index.html` only.
+
 There are two versions:
 
 | File | Runs on | Players need |
