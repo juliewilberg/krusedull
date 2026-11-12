@@ -304,6 +304,7 @@ details[open] summary{margin-bottom:8px}
 const W = 800, H = 600;
 const $ = id => document.getElementById(id);
 const DEFAULT_WORDS = [...new Set(`sol,måne,stjerne,regnbue,sky,lyn,snømann,paraply,fjell,vulkan,øy,strand,bølge,fyrtårn,tre,blomst,kaktus,sopp,eple,banan,ananas,jordbær,gulrot,brokkoli,pizza,taco,hamburger,pølse,vaffel,iskrem,kake,kaffe,ost,egg,brød,kanelbolle,brunost,katt,hund,hest,ku,gris,sau,høne,and,ugle,pingvin,elg,rev,bjørn,ulv,hval,hai,blekksprut,krabbe,snegle,edderkopp,bie,sommerfugl,slange,krokodille,sjiraff,elefant,løve,ape,dinosaur,drage,enhjørning,robot,romvesen,spøkelse,vampyr,pirat,ridder,prinsesse,krone,sverd,skattekiste,slott,telt,hytte,iglo,bro,tårn,sykkel,bil,buss,tog,fly,båt,ubåt,rakett,helikopter,traktor,skateboard,ski,skøyter,akebrett,fotball,tennis,bowling,gitar,piano,trommer,fiolin,mikrofon,hodetelefoner,kamera,telefon,datamaskin,tastatur,lyspære,batteri,magnet,vekkerklokke,kalender,nøkkel,dør,vindu,trapp,heis,seng,sofa,lampe,speil,dusj,badekar,tannbørste,saks,blyant,linjal,bok,brev,gave,ballong,bursdag,julenisse,juletre,påskeegg,snøfnugg,fyrverkeri,briller,hatt,lue,votter,skjerf,sokk,støvel,ryggsekk,koffert,lommebok,diamant,ring,tannlege,brannbil,politibil,kaffemaskin,printer,whiteboard,fredagstaco,hjemmekontor,deadline,regneark,e-post,videomøte,kantine,lunsj,kontorstol,kaffekopp,ferie,hengekøye,grill,badeball,apekatt,sjøhest,flaggermus,pave,kenguru,panda,isbjørn,flodhest,neshorn,sel,måke,ørn,papegøye,flamingo,påfugl,tukan,sjøstjerne,manet,delfin,skilpadde,frosk,tusenbein,maur,marihøne,bever,pinnsvin,ekorn,mus,kanin,esel,geit,lama,kamel,sebra,gepard,hjort,reinsdyr,tiger,gorilla,hamster,fisk,rotte,tømmerhugger,gressløk,gresskar,potet,løk,agurk,tomat,mais,druer,vannmelon,sitron,appelsin,kirsebær,pære,jordnøtt,popcorn,smultring,sjokolade,lollipop,hotdog,spagetti,sushi,pannekake,burger,muffins,bagett,pretzel,melk,te,juice,sukkertøy,iskaffe,fyrstikk,stearinlys,ildsted,bål,peis,gryte,stekepanne,kniv,gaffel,skje,tallerken,kopp,flaske,vannkoker,brødrister,kjøleskap,vaskemaskin,støvsuger,kost,bøtte,hammer,sag,skrutrekker,tang,stige,spade,øks,hjul,tannhjul,anker,ratt,kompass,kart,globus,teleskop,mikroskop,kikkert,lommelykt,lykt,parasoll,drivhus,vindmølle,fabrikk,kirke,moské,pyramide,tempel,fontene,brannhydrant,postkasse,trafikklys,veiskilt,gatelys,bensinstasjon,flyplass,havn,fergen,seilbåt,kano,kajakk,flåte,luftballong,fallskjerm,drone,sporvogn,moped,motorsykkel,gravemaskin,kran,lastebil,ambulanse,campingvogn,rullestol,rulleskøyter,trampoline,huske,sklie,vippe,sandkasse,badeand,dukke,bamse,lego,terning,sjakk,kortstokk,puslespill,drage,jojo,tryllestav,tryllehatt,sirkus,klovn,sirkustelt,magiker,trollmann,fe,hekse,heks,havfrue,nisse,troll,kjempe,mumie,zombie,skjelett,gravstein,gresskarlykt,julekule,adventskalender,pepperkake,gaveeske,snøscooter,snøball,skihopp,kjelke,hockey,basketball,volleyball,håndball,golf,boksing,sykling,svømming,klatring,surfing,dykking,fiske,fiskestang,bue,pil,skyteskive,medalje,pokal,flagg,fakkel,trofé,maraton,startblokk,mål,dommer,fløyte,stoppeklokke,vekt,briller,solbriller,parykk,slips,genser,kjole,bukse,sko,tøfler,sandaler,hansker,belte,paraplyen,veske,smykke,krone,halskjede,øredobb,klokke,armbånd,hårbørste,saks,speilbilde,sminke,leppestift,såpe,håndkle,toalett,vaskeservant,søppelbøtte,pose,eske,pakke,konvolutt,frimerke,stempel,mappe,binders,teip,lim,viskelær,tusj,fargeblyant,maleri,pensel,palett,staffeli,skulptur,museum,teater,kino,popkorn,film,scene,kulisser,radio,tv,fjernkontroll,høyttaler,vinyl,kassett,walkie-talkie,smarttelefon,nettbrett,skjerm,kabel,stikkontakt,wifi,sky-lagring,passord,hacker,robotstøvsuger,chatbot,programmerer,bug,backup,server,møterom,flipover,post-it,presentasjon,kaffepause,overtid,lønning,sjef,praktikant,julebord,teambuilding,hjemmekontor,hodepine,søvnig,mandag,helg,sommerfest,pendler,rushtid,kø,sykemelding,kaffekapsel,vannfontene,lunsjboks,matpakke,fotballtrener,kontorplante`.split(","))];
+const WORDS_EN = [...new Set(`sun,moon,star,rainbow,cloud,lightning,snowman,umbrella,mountain,volcano,island,beach,wave,lighthouse,tree,flower,cactus,mushroom,apple,banana,pineapple,strawberry,carrot,broccoli,pizza,taco,hamburger,hot dog,waffle,ice cream,cake,coffee,cheese,egg,bread,cinnamon bun,donut,popcorn,pancake,sushi,spaghetti,cat,dog,horse,cow,pig,sheep,chicken,duck,owl,penguin,moose,fox,bear,wolf,whale,shark,octopus,crab,snail,spider,bee,butterfly,snake,crocodile,giraffe,elephant,lion,monkey,dinosaur,dragon,unicorn,robot,alien,ghost,vampire,pirate,knight,princess,crown,sword,treasure chest,castle,tent,cabin,igloo,bridge,tower,bicycle,car,bus,train,airplane,boat,submarine,rocket,helicopter,tractor,skateboard,skis,ice skates,sled,football,tennis,bowling,guitar,piano,drums,violin,microphone,headphones,camera,telephone,computer,keyboard,light bulb,battery,magnet,alarm clock,calendar,key,door,window,stairs,elevator,bed,sofa,lamp,mirror,shower,bathtub,toothbrush,scissors,pencil,ruler,book,letter,gift,balloon,birthday,santa claus,christmas tree,easter egg,snowflake,fireworks,glasses,hat,beanie,mittens,scarf,sock,boot,backpack,suitcase,wallet,diamond,ring,dentist,fire truck,police car,coffee machine,printer,whiteboard,home office,deadline,spreadsheet,email,video call,cafeteria,lunch,office chair,coffee cup,vacation,hammock,barbecue,beach ball,sandcastle,kangaroo,panda,polar bear,hippo,rhino,seal,seagull,eagle,parrot,flamingo,peacock,toucan,starfish,jellyfish,dolphin,turtle,frog,ladybug,beaver,hedgehog,squirrel,mouse,rabbit,donkey,goat,camel,zebra,cheetah,tiger,gorilla,hamster,fish,bat,pumpkin,potato,onion,cucumber,tomato,corn,grapes,watermelon,lemon,orange,cherry,pear,chocolate,lollipop,candy,knife,fork,spoon,plate,cup,bottle,kettle,toaster,fridge,washing machine,vacuum cleaner,broom,bucket,hammer,saw,screwdriver,pliers,ladder,shovel,axe,wheel,gear,anchor,compass,map,globe,telescope,microscope,binoculars,flashlight,lantern,windmill,factory,church,pyramid,fountain,fire hydrant,mailbox,traffic light,road sign,gas station,airport,harbor,ferry,sailboat,canoe,raft,hot air balloon,parachute,drone,tram,scooter,motorcycle,excavator,crane,truck,ambulance,caravan,wheelchair,roller skates,trampoline,swing,slide,seesaw,sandbox,rubber duck,doll,teddy bear,dice,chess,deck of cards,puzzle,yo-yo,magic wand,magician,circus,clown,wizard,fairy,witch,mermaid,troll,giant,mummy,zombie,skeleton,tombstone,jack-o-lantern,gingerbread man,snowball,hockey,basketball,volleyball,golf,boxing,swimming,climbing,surfing,scuba diving,fishing rod,bow and arrow,medal,trophy,flag,torch,whistle,stopwatch,scale,sunglasses,wig,tie,sweater,dress,pants,shoe,slippers,sandals,gloves,belt,purse,necklace,earring,watch,bracelet,hairbrush,lipstick,soap,towel,toilet,sink,trash can,box,package,envelope,stamp,folder,paperclip,tape,glue,eraser,marker,crayon,painting,paintbrush,easel,sculpture,museum,theater,cinema,movie,stage,radio,television,remote control,speaker,vinyl record,cassette,smartphone,tablet,screen,cable,power outlet,wifi,password,hacker,chatbot,programmer,bug,server,meeting room,sticky note,presentation,coffee break,overtime,boss,intern,team building,headache,monday,weekend,traffic jam,lunch box,office plant`.split(","))];
 const COLORS = ["#1d1d1f","#7a7f87","#e23b3b","#f28c28","#f5c518","#2fa84f","#1aa6a6","#2f5bea","#7b4ddb","#e35d9c","#8a5a2b","#f1c7a3"];
 const SIZES = [4, 9, 18, 34];
 const REACTS = ["😂", "👏", "😮", "❤️", "🤔", "🔥"];
@@ -393,7 +394,7 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, v); } catch (e){} }
 };
 const savedNick = () => (store.get("krusedull:nick") || "").slice(0, 24);
-const defaults = {phase:"lobby", rounds:3, drawTime:80};
+const defaults = {phase:"lobby", rounds:3, drawTime:80, lang:"no"};
 const cur = () => Object.assign({}, defaults, S.state || {});
 const drawerOf = st => (st.order || [])[st.turnIdx];
 const inGame = st => (st.order || []).includes(S.uid);
@@ -758,18 +759,18 @@ function same(st){ const n = cur(); return n.turnId === st.turnId && n.phase ===
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 /* Remember which words this browser has already offered, so the same ones don't keep coming back.
    Once most of the list has been used, the memory is cleared and it starts over. */
-const SEEN_KEY = "krusedull.seenWords";
-function loadSeen(){ try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || []; } catch (e) { return []; } }
-function saveSeen(a){ try { localStorage.setItem(SEEN_KEY, JSON.stringify(a)); } catch (e) {} }
-function wordPool(){
-  return DEFAULT_WORDS;
+const seenKey = lang => "krusedull.seenWords" + (lang === "en" ? ".en" : "");
+function loadSeen(lang){ try { return JSON.parse(localStorage.getItem(seenKey(lang))) || []; } catch (e) { return []; } }
+function saveSeen(lang, a){ try { localStorage.setItem(seenKey(lang), JSON.stringify(a)); } catch (e) {} }
+function wordPool(lang){
+  return lang === "en" ? WORDS_EN : DEFAULT_WORDS;
 }
-function pickChoices(n){
-  let seen = loadSeen();
-  let fresh = wordPool().filter(w => !seen.includes(w));
-  if (fresh.length < n * 3){ seen = []; fresh = wordPool(); }
+function pickChoices(n, lang){
+  let seen = loadSeen(lang);
+  let fresh = wordPool(lang).filter(w => !seen.includes(w));
+  if (fresh.length < n * 3){ seen = []; fresh = wordPool(lang); }
   const picks = shuffle(fresh).slice(0, n);
-  saveSeen(seen.concat(picks));
+  saveSeen(lang, seen.concat(picks));
   return picks;
 }
 
@@ -809,7 +810,7 @@ async function nextTurn(st){
 function ensureChoices(){
   const st = cur();
   if (S.choicesFor === st.turnId && S.choices) return;
-  S.choices = pickChoices(3); S.choicesFor = st.turnId;
+  S.choices = pickChoices(3, st.lang); S.choicesFor = st.turnId;
 }
 const maskOf = w => [...w].map(ch => /[\s-]/.test(ch) ? ch : "_").join("");
 async function pickWord(word){
@@ -1055,7 +1056,8 @@ function buildLobby(ov){
     el("div", { class: "chips", id: "lobbyChips" }),
     el("div", { class: "row" },
       el("label", { class: "field" }, "Runder", sel("setRounds", [2, 3, 4, 5], v => setLobby({ rounds: +v }))),
-      el("label", { class: "field" }, "Tegnetid", sel("setTime", [60, 80, 100, 120], v => setLobby({ drawTime: +v }), v => v + " sek"))),
+      el("label", { class: "field" }, "Tegnetid", sel("setTime", [60, 80, 100, 120], v => setLobby({ drawTime: +v }), v => v + " sek")),
+      el("label", { class: "field" }, "Gjetteord", sel("setLang", ["no", "en"], v => setLobby({ lang: v }), v => v === "en" ? "Engelsk" : "Norsk"))),
     el("div", {}, el("button", { class: "btn go", id: "startBtn", type: "button", onclick: startGame }, "Start spillet!")),
     el("p", { class: "hint", id: "startHint" })
   );
@@ -1090,10 +1092,11 @@ function updateLobby(st){
   const nick = $("nick");
   if (document.activeElement !== nick && !nick.dataset.touched){ nick.value = (S.players[S.uid] && S.players[S.uid].nick) || savedNick(); }
   nick.oninput = () => { nick.dataset.touched = "1"; };
-  const sr = $("setRounds"), stt = $("setTime");
+  const sr = $("setRounds"), stt = $("setTime"), sl = $("setLang");
   if (document.activeElement !== sr) sr.value = String(st.rounds);
   if (document.activeElement !== stt) stt.value = String(st.drawTime);
-  [sr, stt].forEach(x => x.disabled = S.readOnly);
+  if (document.activeElement !== sl) sl.value = st.lang === "en" ? "en" : "no";
+  [sr, stt, sl].forEach(x => x.disabled = S.readOnly);
   const ready = ids.filter(isPresent).length;
   const sb = $("startBtn"); sb.disabled = ready < 2 || S.readOnly || !joined;
   $("startHint").textContent = !joined ? "Bli med først, så kan du starte." : ready < 2 ? "Trenger minst 2 spillere. Del lenken med teamet." : `${ready} spillere klare.`;
