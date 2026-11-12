@@ -105,6 +105,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 .board{position:relative;width:100%;max-width:max(300px,calc((100dvh - 250px) * 4 / 3));aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:2px solid var(--edge);box-shadow:6px 6px 0 color-mix(in srgb,var(--drop) 22%,transparent);background:#fff}
 canvas#cv{display:block;width:100%;height:100%;touch-action:none;background:#fff}
 canvas.can{cursor:crosshair}
+.tool{display:inline-flex;align-items:center;gap:6px}
+.tool .ic{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+canvas.can.fill{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M5 11l7-7 7 7-7 7z' fill='%23fff'/%3E%3Cpath d='M5 11h14'/%3E%3Cpath d='M21 15c0 1.4-1 2.5-1 3.3a1 1 0 0 0 2 0c0-.8-1-1.9-1-3.3z' fill='%23e63946'/%3E%3C/svg%3E") 3 22,crosshair}
+canvas.can.erase{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='%23222' stroke-width='1.8' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 15l9-10a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-6 7H8z' fill='%23f4a6b8'/%3E%3Cpath d='M9 11l6 6'/%3E%3C/svg%3E") 6 22,cell}
 .board.free{aspect-ratio:auto;max-width:720px;background:var(--card)}
 .board.free #cv,.board.free .timebar,.board.free .who,.board.free .fx{display:none}
 .board.free .overlay{position:relative;inset:auto;background:none;backdrop-filter:none;padding:24px 18px}
@@ -278,10 +282,10 @@ details[open] summary{margin-bottom:8px}
       <div class="tools" id="tools" hidden>
         <div class="swatches" id="swatches"></div>
         <div class="sizes" id="sizes"></div>
-        <button class="tool" id="fill" type="button" aria-pressed="false">Fyll</button>
-        <button class="tool" id="eraser" type="button" aria-pressed="false">Viskelær</button>
-        <button class="tool" id="undo" type="button">Angre</button>
-        <button class="tool" id="clear" type="button">Tøm</button>
+        <button class="tool" id="fill" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11l7-7 7 7-7 7z"/><path d="M5 11h14"/><path d="M21 15c0 1.4-1 2.5-1 3.3a1 1 0 0 0 2 0c0-.8-1-1.9-1-3.3z" fill="currentColor"/><path d="M4 21h8"/></svg><span>Fyll</span></button>
+        <button class="tool" id="eraser" type="button" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15l9-10a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-6 7H8z"/><path d="M9 11l6 6"/><path d="M13 20h8"/></svg><span>Viskelær</span></button>
+        <button class="tool" id="undo" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Angre</span></button>
+        <button class="tool" id="clear" type="button"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg><span>Tøm</span></button>
       </div>
     </section>
     <aside class="card chat" aria-label="Gjetting og prat">
@@ -676,6 +680,8 @@ function syncTools(){
   document.querySelectorAll(".sz").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === S.size)));
   $("eraser").setAttribute("aria-pressed", String(S.eraser));
   $("fill").setAttribute("aria-pressed", String(S.fill));
+  cv.classList.toggle("fill", S.fill);
+  cv.classList.toggle("erase", S.eraser);
 }
 
 /* ---------- chat log ---------- */
