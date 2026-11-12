@@ -303,7 +303,7 @@ details[open] summary{margin-bottom:8px}
 (() => {
 const W = 800, H = 600;
 const $ = id => document.getElementById(id);
-const DEFAULT_WORDS = [...new Set(`sol,måne,stjerne,regnbue,sky,lyn,snømann,paraply,fjell,vulkan,øy,strand,bølge,fyrtårn,tre,blomst,kaktus,sopp,eple,banan,ananas,jordbær,gulrot,brokkoli,pizza,taco,hamburger,pølse,vaffel,iskrem,kake,kaffe,ost,egg,brød,kanelbolle,brunost,katt,hund,hest,ku,gris,sau,høne,and,ugle,pingvin,elg,rev,bjørn,ulv,hval,hai,blekksprut,krabbe,snegle,edderkopp,bie,sommerfugl,slange,krokodille,sjiraff,elefant,løve,ape,dinosaur,drage,enhjørning,robot,romvesen,spøkelse,vampyr,pirat,ridder,prinsesse,krone,sverd,skattekiste,slott,telt,hytte,iglo,bro,tårn,sykkel,bil,buss,tog,fly,båt,ubåt,rakett,helikopter,traktor,skateboard,ski,skøyter,akebrett,fotball,tennis,bowling,gitar,piano,trommer,fiolin,mikrofon,hodetelefoner,kamera,telefon,datamaskin,tastatur,lyspære,batteri,magnet,vekkerklokke,kalender,nøkkel,dør,vindu,trapp,heis,seng,sofa,lampe,speil,dusj,badekar,tannbørste,saks,blyant,linjal,bok,brev,gave,ballong,bursdag,julenisse,juletre,påskeegg,snøfnugg,fyrverkeri,briller,hatt,lue,votter,skjerf,sokk,støvel,ryggsekk,koffert,lommebok,diamant,ring,tannlege,brannbil,politibil,kaffemaskin,printer,whiteboard,fredagstaco,hjemmekontor,deadline,regneark,e-post,videomøte,kantine,lunsj,kontorstol,kaffekopp,ferie,hengekøye,grill,badeball,sandslott`.split(","))];
+const DEFAULT_WORDS = [...new Set(`sol,måne,stjerne,regnbue,sky,lyn,snømann,paraply,fjell,vulkan,øy,strand,bølge,fyrtårn,tre,blomst,kaktus,sopp,eple,banan,ananas,jordbær,gulrot,brokkoli,pizza,taco,hamburger,pølse,vaffel,iskrem,kake,kaffe,ost,egg,brød,kanelbolle,brunost,katt,hund,hest,ku,gris,sau,høne,and,ugle,pingvin,elg,rev,bjørn,ulv,hval,hai,blekksprut,krabbe,snegle,edderkopp,bie,sommerfugl,slange,krokodille,sjiraff,elefant,løve,ape,dinosaur,drage,enhjørning,robot,romvesen,spøkelse,vampyr,pirat,ridder,prinsesse,krone,sverd,skattekiste,slott,telt,hytte,iglo,bro,tårn,sykkel,bil,buss,tog,fly,båt,ubåt,rakett,helikopter,traktor,skateboard,ski,skøyter,akebrett,fotball,tennis,bowling,gitar,piano,trommer,fiolin,mikrofon,hodetelefoner,kamera,telefon,datamaskin,tastatur,lyspære,batteri,magnet,vekkerklokke,kalender,nøkkel,dør,vindu,trapp,heis,seng,sofa,lampe,speil,dusj,badekar,tannbørste,saks,blyant,linjal,bok,brev,gave,ballong,bursdag,julenisse,juletre,påskeegg,snøfnugg,fyrverkeri,briller,hatt,lue,votter,skjerf,sokk,støvel,ryggsekk,koffert,lommebok,diamant,ring,tannlege,brannbil,politibil,kaffemaskin,printer,whiteboard,fredagstaco,hjemmekontor,deadline,regneark,e-post,videomøte,kantine,lunsj,kontorstol,kaffekopp,ferie,hengekøye,grill,badeball,apekatt,sjøhest,flaggermus,pave,kenguru,panda,isbjørn,flodhest,neshorn,sel,måke,ørn,papegøye,flamingo,påfugl,tukan,sjøstjerne,manet,delfin,skilpadde,frosk,tusenbein,maur,marihøne,bever,pinnsvin,ekorn,mus,kanin,esel,geit,lama,kamel,sebra,gepard,hjort,reinsdyr,tiger,gorilla,hamster,fisk,rotte,tømmerhugger,gressløk,gresskar,potet,løk,agurk,tomat,mais,druer,vannmelon,sitron,appelsin,kirsebær,pære,jordnøtt,popcorn,smultring,sjokolade,lollipop,hotdog,spagetti,sushi,pannekake,burger,muffins,bagett,pretzel,melk,te,juice,sukkertøy,iskaffe,fyrstikk,stearinlys,ildsted,bål,peis,gryte,stekepanne,kniv,gaffel,skje,tallerken,kopp,flaske,vannkoker,brødrister,kjøleskap,vaskemaskin,støvsuger,kost,bøtte,hammer,sag,skrutrekker,tang,stige,spade,øks,hjul,tannhjul,anker,ratt,kompass,kart,globus,teleskop,mikroskop,kikkert,lommelykt,lykt,parasoll,drivhus,vindmølle,fabrikk,kirke,moské,pyramide,tempel,fontene,brannhydrant,postkasse,trafikklys,veiskilt,gatelys,bensinstasjon,flyplass,havn,fergen,seilbåt,kano,kajakk,flåte,luftballong,fallskjerm,drone,sporvogn,moped,motorsykkel,gravemaskin,kran,lastebil,ambulanse,campingvogn,rullestol,rulleskøyter,trampoline,huske,sklie,vippe,sandkasse,badeand,dukke,bamse,lego,terning,sjakk,kortstokk,puslespill,drage,jojo,tryllestav,tryllehatt,sirkus,klovn,sirkustelt,magiker,trollmann,fe,hekse,heks,havfrue,nisse,troll,kjempe,mumie,zombie,skjelett,gravstein,gresskarlykt,julekule,adventskalender,pepperkake,gaveeske,snøscooter,snøball,skihopp,kjelke,hockey,basketball,volleyball,håndball,golf,boksing,sykling,svømming,klatring,surfing,dykking,fiske,fiskestang,bue,pil,skyteskive,medalje,pokal,flagg,fakkel,trofé,maraton,startblokk,mål,dommer,fløyte,stoppeklokke,vekt,briller,solbriller,parykk,slips,genser,kjole,bukse,sko,tøfler,sandaler,hansker,belte,paraplyen,veske,smykke,krone,halskjede,øredobb,klokke,armbånd,hårbørste,saks,speilbilde,sminke,leppestift,såpe,håndkle,toalett,vaskeservant,søppelbøtte,pose,eske,pakke,konvolutt,frimerke,stempel,mappe,binders,teip,lim,viskelær,tusj,fargeblyant,maleri,pensel,palett,staffeli,skulptur,museum,teater,kino,popkorn,film,scene,kulisser,radio,tv,fjernkontroll,høyttaler,vinyl,kassett,walkie-talkie,smarttelefon,nettbrett,skjerm,kabel,stikkontakt,wifi,sky-lagring,passord,hacker,robotstøvsuger,chatbot,programmerer,bug,backup,server,møterom,flipover,post-it,presentasjon,kaffepause,overtid,lønning,sjef,praktikant,julebord,teambuilding,hjemmekontor,hodepine,søvnig,mandag,helg,sommerfest,pendler,rushtid,kø,sykemelding,kaffekapsel,vannfontene,lunsjboks,matpakke,fotballtrener,kontorplante`.split(","))];
 const COLORS = ["#1d1d1f","#7a7f87","#e23b3b","#f28c28","#f5c518","#2fa84f","#1aa6a6","#2f5bea","#7b4ddb","#e35d9c","#8a5a2b","#f1c7a3"];
 const SIZES = [4, 9, 18, 34];
 const REACTS = ["😂", "👏", "😮", "❤️", "🤔", "🔥"];
@@ -756,8 +756,21 @@ function once(key, fn){
 function same(st){ const n = cur(); return n.turnId === st.turnId && n.phase === st.phase; }
 
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+/* Remember which words this browser has already offered, so the same ones don't keep coming back.
+   Once most of the list has been used, the memory is cleared and it starts over. */
+const SEEN_KEY = "krusedull.seenWords";
+function loadSeen(){ try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || []; } catch (e) { return []; } }
+function saveSeen(a){ try { localStorage.setItem(SEEN_KEY, JSON.stringify(a)); } catch (e) {} }
 function wordPool(){
   return DEFAULT_WORDS;
+}
+function pickChoices(n){
+  let seen = loadSeen();
+  let fresh = wordPool().filter(w => !seen.includes(w));
+  if (fresh.length < n * 3){ seen = []; fresh = wordPool(); }
+  const picks = shuffle(fresh).slice(0, n);
+  saveSeen(seen.concat(picks));
+  return picks;
 }
 
 async function startGame(){
@@ -796,7 +809,7 @@ async function nextTurn(st){
 function ensureChoices(){
   const st = cur();
   if (S.choicesFor === st.turnId && S.choices) return;
-  S.choices = shuffle(wordPool()).slice(0, 3); S.choicesFor = st.turnId;
+  S.choices = pickChoices(3); S.choicesFor = st.turnId;
 }
 const maskOf = w => [...w].map(ch => /[\s-]/.test(ch) ? ch : "_").join("");
 async function pickWord(word){
