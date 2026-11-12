@@ -256,7 +256,6 @@ details[open] summary{margin-bottom:8px}
     </div>
     <div class="right">
       <div class="clock" id="clock" aria-label="Tid igjen"></div>
-      <button class="ghost" id="muteBtn" type="button" aria-label="Lyd av eller på"></button>
       <button class="ghost" id="quitBtn" type="button" hidden>Avslutt spillet</button>
     </div>
   </header>
@@ -279,6 +278,7 @@ details[open] summary{margin-bottom:8px}
       <div class="tools" id="tools" hidden>
         <div class="swatches" id="swatches"></div>
         <div class="sizes" id="sizes"></div>
+        <button class="tool" id="fill" type="button" aria-pressed="false">Fyll</button>
         <button class="tool" id="eraser" type="button" aria-pressed="false">Viskelær</button>
         <button class="tool" id="undo" type="button">Angre</button>
         <button class="tool" id="clear" type="button">Tøm</button>
@@ -379,7 +379,7 @@ function avatarSvg(o){
 
 const S = {
   db:null, room:null, user:null, uid:null, state:null, stateOk:false, players:{}, hits:[], hitsFor:null, unsubHits:null, hitsInit:false,
-  present:new Set(), peersReady:false, roomSeen:false, prof:{}, strokes:[], color:COLORS[0], size:9, eraser:false,
+  present:new Set(), peersReady:false, roomSeen:false, prof:{}, strokes:[], color:COLORS[0], size:9, eraser:false, fill:false,
   secret:null, choices:null, choicesFor:null, once:{}, seenHits:new Set(), phaseKey:"", canvasDoc:null, q:Promise.resolve(),
   readOnly:false, overlayKey:null, quitArmed:false, ready:false, roomId:null, presNick:{}, setupMissing:false,
   myAv:null, pops:{}, prevSc:null, prevScGame:null, wordKey:null, lastMask:null, whoKey:null, lastSec:null, seated:null
@@ -389,7 +389,7 @@ const store = {
   set(k, v){ try { localStorage.setItem(k, v); } catch (e){} }
 };
 const savedNick = () => (store.get("krusedull:nick") || "").slice(0, 24);
-const defaults = {phase:"lobby", rounds:3, drawTime:80, customWords:"", onlyCustom:false};
+const defaults = {phase:"lobby", rounds:3, drawTime:80};
 const cur = () => Object.assign({}, defaults, S.state || {});
 const drawerOf = st => (st.order || [])[st.turnIdx];
 const inGame = st => (st.order || []).includes(S.uid);
@@ -439,7 +439,6 @@ function pushAvatar(){
 
 /* ---------- sound and effects ---------- */
 let actx = null;
-const muted = () => store.get("krusedull:mute") === "1";
 // Each note is [frequency, start offset, duration, wave type, volume].
 const SFX = {
   hit: [[523, 0, .12], [659, .09, .12], [784, .18, .12], [1047, .27, .3]],
@@ -451,7 +450,6 @@ const SFX = {
   pop: [[720, 0, .06, "sine", .06]]
 };
 function sfx(name){
-  if (muted()) return;
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === "suspended") actx.resume();
@@ -503,10 +501,6 @@ function buildReacts(){
     });
     $("reacts").appendChild(b);
   });
-  const m = $("muteBtn");
-  const sync = () => { m.textContent = muted() ? "🔇" : "🔊"; };
-  m.addEventListener("click", () => { store.set("krusedull:mute", muted() ? "0" : "1"); sync(); sfx("pop"); });
-  sync();
 }
 let namesPending = false;
 function ensureNames(ids){
@@ -546,8 +540,32 @@ function isLeader(){
 /* ---------- canvas ---------- */
 const cv = $("cv"), ctx = cv.getContext("2d");
 function clearCanvas(){ ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H); }
+// Flood fill: replays deterministically because fills are stored as strokes ({f:1}) in order.
+function floodFill(x, y, hex){
+  x = clamp(Math.round(x), 0, W - 1); y = clamp(Math.round(y), 0, H - 1);
+  const img = ctx.getImageData(0, 0, W, H), d = img.data;
+  const at = (px, py) => (py * W + px) * 4;
+  const i0 = at(x, y), tr = d[i0], tg = d[i0 + 1], tb = d[i0 + 2];
+  const fr = parseInt(hex.slice(1, 3), 16), fg = parseInt(hex.slice(3, 5), 16), fb = parseInt(hex.slice(5, 7), 16);
+  if (Math.abs(tr - fr) + Math.abs(tg - fg) + Math.abs(tb - fb) < 6) return;
+  const TOL = 110; // soaks up anti-aliased edges so no pale halo is left behind
+  const match = i => Math.abs(d[i] - tr) + Math.abs(d[i + 1] - tg) + Math.abs(d[i + 2] - tb) <= TOL;
+  const seen = new Uint8Array(W * H), stack = [x, y];
+  while (stack.length){
+    const cy = stack.pop(), cx0 = stack.pop();
+    let lx = cx0; while (lx >= 0 && !seen[cy * W + lx] && match(at(lx, cy))) lx--; lx++;
+    let up = false, down = false;
+    for (let px = lx; px < W && !seen[cy * W + px] && match(at(px, cy)); px++){
+      seen[cy * W + px] = 1; const i = at(px, cy); d[i] = fr; d[i + 1] = fg; d[i + 2] = fb; d[i + 3] = 255;
+      if (cy > 0){ const m = !seen[(cy - 1) * W + px] && match(at(px, cy - 1)); if (m && !up) stack.push(px, cy - 1); up = m; }
+      if (cy < H - 1){ const m = !seen[(cy + 1) * W + px] && match(at(px, cy + 1)); if (m && !down) stack.push(px, cy + 1); down = m; }
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+}
 function drawStroke(st, from){
   const p = st.p; if (p.length < 2) return;
+  if (st.f){ floodFill(p[0], p[1], st.c); return; }
   ctx.strokeStyle = st.c; ctx.fillStyle = st.c; ctx.lineWidth = st.s; ctx.lineCap = "round"; ctx.lineJoin = "round";
   if (p.length === 2){ ctx.beginPath(); ctx.arc(p[0], p[1], st.s / 2, 0, Math.PI * 2); ctx.fill(); return; }
   let i = Math.max(0, (from || 0) - 2);
@@ -562,7 +580,11 @@ function cleanPts(p){
   return out;
 }
 const okColor = c => typeof c === "string" && /^#[0-9a-f]{6}$/i.test(c) ? c : "#1d1d1f";
-function cleanStroke(s){ return { id: String(s.id || rid()).slice(0, 16), c: okColor(s.c), s: clamp(+s.s || 4, 1, 60), p: cleanPts(s.p) }; }
+function cleanStroke(s){
+  const o = { id: String(s.id || rid()).slice(0, 16), c: okColor(s.c), s: clamp(+s.s || 4, 1, 60), p: cleanPts(s.p) };
+  if (s.f){ o.f = 1; o.p = o.p.slice(0, 2); }
+  return o;
+}
 clearCanvas();
 
 function emit(topic, data){ if (S.room) S.room.emit(topic, data).catch(() => {}); }
@@ -573,13 +595,18 @@ function canDraw(){ const st = cur(); return st.phase === "drawing" && isDrawer(
 function flush(){
   clearTimeout(flushT); flushT = null;
   if (!active || !pending.length) return;
-  emit("seg", { t: cur().turnId, id: active.id, c: active.c, s: active.s, p: pending });
+  emit("seg", { t: cur().turnId, id: active.id, c: active.c, s: active.s, f: active.f ? 1 : 0, p: pending });
   pending = [];
 }
 cv.addEventListener("pointerdown", e => {
   if (!canDraw()) return;
   e.preventDefault(); cv.setPointerCapture(e.pointerId);
   const [x, y] = pt(e);
+  if (S.fill){
+    active = { id: rid(), c: S.color, s: 1, f: 1, p: [x, y] };
+    S.strokes.push(active); drawStroke(active, 0);
+    pending = [x, y]; flush(); active = null; scheduleSave(); return;
+  }
   active = { id: rid(), c: S.eraser ? "#ffffff" : S.color, s: S.eraser ? Math.max(S.size, 18) : S.size, p: [x, y] };
   S.strokes.push(active); drawStroke(active, 0);
   pending = [x, y]; flush();
@@ -604,7 +631,7 @@ let saveT = null, saving = Promise.resolve();
 function scheduleSave(){ clearTimeout(saveT); saveT = setTimeout(saveCanvas, 1200); }
 function saveCanvas(){
   const st = cur(); if (!S.db || !isDrawer() || st.phase !== "drawing") return;
-  const data = { turnId: st.turnId, strokes: S.strokes.map(s => ({ id: s.id, c: s.c, s: s.s, p: s.p })) };
+  const data = { turnId: st.turnId, strokes: S.strokes.map(s => s.f ? { id: s.id, c: s.c, s: s.s, f: 1, p: s.p } : { id: s.id, c: s.c, s: s.s, p: s.p }) };
   if (JSON.stringify(data).length > 240000) return;
   saving = saving.then(() => S.db.doc("canvas/current").set(data)).catch(() => {});
 }
@@ -633,7 +660,8 @@ function buildTools(){
     const i = document.createElement("i"); const d = Math.max(4, Math.round(s * 0.6)); i.style.width = i.style.height = d + "px"; b.appendChild(i);
     b.dataset.s = s; b.addEventListener("click", () => { S.size = s; syncTools(); }); sz.appendChild(b);
   });
-  $("eraser").addEventListener("click", () => { S.eraser = !S.eraser; syncTools(); });
+  $("eraser").addEventListener("click", () => { S.eraser = !S.eraser; if (S.eraser) S.fill = false; syncTools(); });
+  $("fill").addEventListener("click", () => { S.fill = !S.fill; if (S.fill) S.eraser = false; syncTools(); });
   $("undo").addEventListener("click", () => {
     if (!canDraw()) return; const s = S.strokes.pop(); if (!s) return;
     redraw(); emit("undo", { t: cur().turnId, id: s.id }); scheduleSave();
@@ -647,6 +675,7 @@ function syncTools(){
   document.querySelectorAll(".sw").forEach(b => b.setAttribute("aria-pressed", String(!S.eraser && b.dataset.c === S.color)));
   document.querySelectorAll(".sz").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.s === S.size)));
   $("eraser").setAttribute("aria-pressed", String(S.eraser));
+  $("fill").setAttribute("aria-pressed", String(S.fill));
 }
 
 /* ---------- chat log ---------- */
@@ -721,13 +750,8 @@ function once(key, fn){
 function same(st){ const n = cur(); return n.turnId === st.turnId && n.phase === st.phase; }
 
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function customList(st){
-  return [...new Set(String(st.customWords || "").split(/[,\n]/).map(s => s.trim().replace(/\s+/g, " ")).filter(s => s.length >= 2 && s.length <= 30))];
-}
-function wordPool(st){
-  const c = customList(st);
-  if (st.onlyCustom && c.length >= 3) return c;
-  return DEFAULT_WORDS.concat(c, c);
+function wordPool(){
+  return DEFAULT_WORDS;
 }
 
 async function startGame(){
@@ -766,7 +790,7 @@ async function nextTurn(st){
 function ensureChoices(){
   const st = cur();
   if (S.choicesFor === st.turnId && S.choices) return;
-  S.choices = shuffle(wordPool(st)).slice(0, 3); S.choicesFor = st.turnId;
+  S.choices = shuffle(wordPool()).slice(0, 3); S.choicesFor = st.turnId;
 }
 const maskOf = w => [...w].map(ch => /[\s-]/.test(ch) ? ch : "_").join("");
 async function pickWord(word){
@@ -1013,22 +1037,15 @@ function buildLobby(ov){
     el("div", { class: "row" },
       el("label", { class: "field" }, "Runder", sel("setRounds", [2, 3, 4, 5], v => setLobby({ rounds: +v }))),
       el("label", { class: "field" }, "Tegnetid", sel("setTime", [60, 80, 100, 120], v => setLobby({ drawTime: +v }), v => v + " sek"))),
-    el("details", {},
-      el("summary", {}, "Egne ord (valgfritt)"),
-      el("textarea", { id: "setWords", placeholder: "Interne vitser, prosjektnavn, kontorting … skill med komma eller linjeskift" }),
-      el("label", { class: "check" }, el("input", { type: "checkbox", id: "setOnly" }), "Bruk bare egne ord (minst 3)")),
     el("div", {}, el("button", { class: "btn go", id: "startBtn", type: "button", onclick: startGame }, "Start spillet!")),
     el("p", { class: "hint", id: "startHint" })
   );
   ov.append(panel);
-  $("setWords").addEventListener("change", e => setLobby({ customWords: e.target.value.slice(0, 4000) }));
-  $("setOnly").addEventListener("change", e => setLobby({ onlyCustom: e.target.checked }));
   $("nick").addEventListener("change", e => {
     const v = e.target.value.trim().slice(0, 24);
     if (v){ store.set("krusedull:nick", v); setNick(v); }
     if (S.players[S.uid] && v) S.db.doc("players/" + S.uid).update({ nick: v }).catch(handleWriteErr);
   });
-  if (st.customWords && $("setWords")) $("setWords").closest("details").open = true;
 }
 function sel(id, vals, on, fmt){
   const s = el("select", { id });
@@ -1054,16 +1071,13 @@ function updateLobby(st){
   const nick = $("nick");
   if (document.activeElement !== nick && !nick.dataset.touched){ nick.value = (S.players[S.uid] && S.players[S.uid].nick) || savedNick(); }
   nick.oninput = () => { nick.dataset.touched = "1"; };
-  const sr = $("setRounds"), stt = $("setTime"), sw = $("setWords"), so = $("setOnly");
+  const sr = $("setRounds"), stt = $("setTime");
   if (document.activeElement !== sr) sr.value = String(st.rounds);
   if (document.activeElement !== stt) stt.value = String(st.drawTime);
-  if (document.activeElement !== sw) sw.value = st.customWords || "";
-  so.checked = !!st.onlyCustom;
-  [sr, stt, sw, so].forEach(x => x.disabled = S.readOnly);
+  [sr, stt].forEach(x => x.disabled = S.readOnly);
   const ready = ids.filter(isPresent).length;
   const sb = $("startBtn"); sb.disabled = ready < 2 || S.readOnly || !joined;
-  const cw = customList(st).length;
-  $("startHint").textContent = !joined ? "Bli med først, så kan du starte." : ready < 2 ? "Trenger minst 2 spillere. Del lenken med teamet." : `${ready} spillere klare` + (cw ? ` · ${cw} egne ord` : "") + ".";
+  $("startHint").textContent = !joined ? "Bli med først, så kan du starte." : ready < 2 ? "Trenger minst 2 spillere. Del lenken med teamet." : `${ready} spillere klare.`;
 }
 async function toggleJoin(){
   if (S.readOnly) return;
@@ -1377,7 +1391,8 @@ async function boot(){
       if (m.sameTab || !fromDrawer(m) || isDrawer()) return;
       const dd = m.data; const id = String(dd.id || "").slice(0, 16); if (!id) return;
       let s = S.strokes.find(x => x.id === id);
-      if (!s){ s = { id, c: okColor(dd.c), s: clamp(+dd.s || 4, 1, 60), p: [] }; S.strokes.push(s); }
+      if (!s){ s = { id, c: okColor(dd.c), s: clamp(+dd.s || 4, 1, 60), p: [] }; if (dd.f) s.f = 1; S.strokes.push(s); }
+      else if (s.f) return;
       const from = s.p.length; s.p.push(...cleanPts(dd.p)); drawStroke(s, from);
     });
     room.on("undo", m => {
